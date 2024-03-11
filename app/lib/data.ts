@@ -2,8 +2,8 @@ import { sql } from '@vercel/postgres';
 import { CustomerField, CustomersTableType, InvoiceForm, InvoicesTable, LatestInvoiceRaw, User, Revenue } from './definitions';
 import { formatCurrency } from './utils';
 
-import { PrismaClient, invoices, revenue } from '@prisma/client'
-const prisma = new PrismaClient()
+import { PrismaClient, invoices, revenue } from '@prisma/client';
+const prisma = new PrismaClient();
 
 export async function fetchRevenue() {
     // Add noStore() here to prevent the response from being cached.
@@ -32,7 +32,7 @@ export async function fetchLatestInvoices() {
             ...invoice,
             amount: formatCurrency(invoice.amount)
         }));
-        
+
         return latestInvoices;
     } catch (error) {
         console.error('Database Error:', error);
@@ -45,23 +45,21 @@ export async function fetchCardData() {
         // You can probably combine these into a single SQL query
         // However, we are intentionally splitting them to demonstrate
         // how to initialize multiple queries in parallel with JS.
-        const invoiceCountPromise = sql`SELECT COUNT(*) FROM invoices`;
-        const customerCountPromise = sql`SELECT COUNT(*) FROM customers`;
-        const invoiceStatusPromise = sql`SELECT
-         SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END) AS "paid",
-         SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) AS "pending"
-         FROM invoices`;
+        const invoiceCount = await prisma.$queryRaw<any>`SELECT COUNT(*)::integer FROM invoices`;
+        const customerCount = await prisma.$queryRaw<any>`SELECT COUNT(*)::integer FROM customers`;
+        const invoiceStatus = await prisma.$queryRaw<any>`SELECT
+            SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END)::integer AS "paid",
+            SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END)::integer AS "pending"
+            FROM invoices`;
 
-        const data = await Promise.all([invoiceCountPromise, customerCountPromise, invoiceStatusPromise]);
-
-        const numberOfInvoices = Number(data[0].rows[0].count ?? '0');
-        const numberOfCustomers = Number(data[1].rows[0].count ?? '0');
-        const totalPaidInvoices = formatCurrency(data[2].rows[0].paid ?? '0');
-        const totalPendingInvoices = formatCurrency(data[2].rows[0].pending ?? '0');
+        const numberOfInvoices = invoiceCount[0]?.count;
+        const numberOfCustomers = customerCount[0]?.count;
+        const totalPaidInvoices = formatCurrency(invoiceStatus[0]?.paid ?? '0');
+        const totalPendingInvoices = formatCurrency(invoiceStatus[0]?.pending ?? '0');
 
         return {
-            numberOfCustomers,
             numberOfInvoices,
+            numberOfCustomers,
             totalPaidInvoices,
             totalPendingInvoices
         };
