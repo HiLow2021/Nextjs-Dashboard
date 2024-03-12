@@ -89,21 +89,21 @@ export async function fetchFilteredInvoices(query: string, currentPage: number) 
     try {
         const invoices = await prisma.$queryRaw<InvoicesTable[]>`
             SELECT
-              invoices.id,
-              invoices.amount,
-              invoices.date,
-              invoices.status,
-              customers.name,
-              customers.email,
-              customers.image_url
+                invoices.id,
+                invoices.amount,
+                invoices.date,
+                invoices.status,
+                customers.name,
+                customers.email,
+                customers.image_url
             FROM invoices
             JOIN customers ON invoices.customer_id = customers.id
             WHERE
-              customers.name ILIKE ${`%${query}%`} OR
-              customers.email ILIKE ${`%${query}%`} OR
-              invoices.amount::text ILIKE ${`%${query}%`} OR
-              invoices.date::text ILIKE ${`%${query}%`} OR
-              invoices.status ILIKE ${`%${query}%`}
+                customers.name ILIKE ${`%${query}%`} OR
+                customers.email ILIKE ${`%${query}%`} OR
+                invoices.amount::text ILIKE ${`%${query}%`} OR
+                invoices.date::text ILIKE ${`%${query}%`} OR
+                invoices.status ILIKE ${`%${query}%`}
             ORDER BY invoices.date DESC
             LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}`;
 
@@ -122,11 +122,11 @@ export async function fetchInvoicesPages(query: string) {
             FROM invoices
             JOIN customers ON invoices.customer_id = customers.id
             WHERE
-              customers.name ILIKE ${`%${query}%`} OR
-              customers.email ILIKE ${`%${query}%`} OR
-              invoices.amount::text ILIKE ${`%${query}%`} OR
-              invoices.date::text ILIKE ${`%${query}%`} OR
-              invoices.status ILIKE ${`%${query}%`}`;
+                customers.name ILIKE ${`%${query}%`} OR
+                customers.email ILIKE ${`%${query}%`} OR
+                invoices.amount::text ILIKE ${`%${query}%`} OR
+                invoices.date::text ILIKE ${`%${query}%`} OR
+                invoices.status ILIKE ${`%${query}%`}`;
 
         const totalPages = Math.ceil(count[0].count / ITEMS_PER_PAGE);
 
@@ -143,10 +143,10 @@ export async function fetchInvoiceById(id: string) {
     try {
         const data = await sql<InvoiceForm>`
             SELECT
-              invoices.id,
-              invoices.customer_id,
-              invoices.amount,
-              invoices.status
+                invoices.id,
+                invoices.customer_id,
+                invoices.amount,
+                invoices.status
             FROM invoices
             WHERE invoices.id = ${id};`;
 
@@ -169,8 +169,8 @@ export async function fetchCustomers() {
     try {
         const customers = await prisma.$queryRaw<CustomerField[]>`
             SELECT
-              id,
-              name
+                id,
+                name
             FROM customers
             ORDER BY name ASC`;
 
@@ -187,17 +187,17 @@ export async function fetchFilteredCustomers(query: string) {
     try {
         const data = await sql<CustomersTableType>`
 		    SELECT
-		      customers.id,
-		      customers.name,
-		      customers.email,
-		      customers.image_url,
-		      COUNT(invoices.id) AS total_invoices,
-		      SUM(CASE WHEN invoices.status = 'pending' THEN invoices.amount ELSE 0 END) AS total_pending,
-		      SUM(CASE WHEN invoices.status = 'paid' THEN invoices.amount ELSE 0 END) AS total_paid
+		        customers.id,
+		        customers.name,
+		        customers.email,
+		        customers.image_url,
+		        COUNT(invoices.id) AS total_invoices,
+		        SUM(CASE WHEN invoices.status = 'pending' THEN invoices.amount ELSE 0 END) AS total_pending,
+		        SUM(CASE WHEN invoices.status = 'paid' THEN invoices.amount ELSE 0 END) AS total_paid
 		    FROM customers
 		    LEFT JOIN invoices ON customers.id = invoices.customer_id
 		    WHERE
-		      customers.name ILIKE ${`%${query}%`} OR
+		        customers.name ILIKE ${`%${query}%`} OR
             customers.email ILIKE ${`%${query}%`}
 		    GROUP BY customers.id, customers.name, customers.email, customers.image_url
 		    ORDER BY customers.name ASC`;
