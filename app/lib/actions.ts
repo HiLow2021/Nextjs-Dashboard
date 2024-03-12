@@ -25,12 +25,18 @@ export async function createInvoice(formData: FormData) {
     const amountInCents = amount * 100;
     const date = new Date().toISOString().split('T')[0];
 
-    await prisma.$executeRaw`
-        INSERT INTO invoices (customer_id, amount, status, date)
-        VALUES (${customerId}::uuid, ${amountInCents}, ${status}, ${date}::date)`;
+    try {
+        await prisma.$executeRaw`
+            INSERT INTO invoices (customer_id, amount, status, date)
+            VALUES (${customerId}::uuid, ${amountInCents}, ${status}, ${date}::date)`;
 
-    revalidatePath('/dashboard/invoices');
-    redirect('/dashboard/invoices');
+        revalidatePath('/dashboard/invoices');
+        redirect('/dashboard/invoices');
+    } catch (error) {
+        return {
+            message: 'Database Error: Failed to Create Invoice.'
+        };
+    }
 }
 
 export async function updateInvoice(id: string, formData: FormData) {
@@ -41,17 +47,26 @@ export async function updateInvoice(id: string, formData: FormData) {
     });
     const amountInCents = amount * 100;
 
-    await prisma.$executeRaw`
-        UPDATE invoices
-        SET customer_id = ${customerId}::uuid, amount = ${amountInCents}, status = ${status}
-        WHERE id = ${id}::uuid`;
+    try {
+        await prisma.$executeRaw`
+            UPDATE invoices
+            SET customer_id = ${customerId}::uuid, amount = ${amountInCents}, status = ${status}
+            WHERE id = ${id}::uuid`;
 
-    revalidatePath('/dashboard/invoices');
-    redirect('/dashboard/invoices');
+        revalidatePath('/dashboard/invoices');
+        redirect('/dashboard/invoices');
+    } catch (error) {
+        return { message: 'Database Error: Failed to Update Invoice.' };
+    }
 }
 
 export async function deleteInvoice(id: string) {
-    await prisma.$executeRaw`DELETE FROM invoices WHERE id = ${id}::uuid`;
+    try {
+        await prisma.$executeRaw`DELETE FROM invoices WHERE id = ${id}::uuid`;
+        revalidatePath('/dashboard/invoices');
 
-    revalidatePath('/dashboard/invoices');
+        return { message: 'Deleted Invoice.' };
+    } catch (error) {
+        return { message: 'Database Error: Failed to Delete Invoice.' };
+    }
 }
