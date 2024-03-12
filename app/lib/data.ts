@@ -1,10 +1,8 @@
-import { PrismaClient, revenue } from '@prisma/client';
 import { sql } from '@vercel/postgres';
 import { unstable_noStore as noStore } from 'next/cache';
-import { CustomerField, CustomersTableType, InvoiceForm, InvoicesTable, LatestInvoiceRaw, User } from './definitions';
+import { CustomerField, CustomersTableType, InvoiceForm, InvoicesTable, LatestInvoiceRaw, Revenue, User } from './definitions';
+import prisma from './prisma';
 import { formatCurrency } from './utils';
-
-const prisma = new PrismaClient();
 
 export async function fetchRevenue() {
     // Add noStore() here to prevent the response from being cached.
@@ -17,7 +15,7 @@ export async function fetchRevenue() {
         console.log('Fetching revenue data...');
         await new Promise((resolve) => setTimeout(resolve, 3000));
 
-        const data = await prisma.$queryRaw<revenue[]>`SELECT * FROM revenue`;
+        const data = await prisma.$queryRaw<Revenue[]>`SELECT * FROM revenue`;
 
         console.log('Data fetch completed after 3 seconds.');
 
