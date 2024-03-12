@@ -118,7 +118,7 @@ export async function fetchInvoicesPages(query: string) {
     noStore();
 
     try {
-        const count = await prisma.$queryRaw<any>`SELECT COUNT(*)
+        const count = await prisma.$queryRaw<{ count: number }[]>`SELECT COUNT(*)::integer
             FROM invoices
             JOIN customers ON invoices.customer_id = customers.id
             WHERE
@@ -128,7 +128,7 @@ export async function fetchInvoicesPages(query: string) {
               invoices.date::text ILIKE ${`%${query}%`} OR
               invoices.status ILIKE ${`%${query}%`}`;
 
-        const totalPages = Math.ceil(Number(count[0].count) / ITEMS_PER_PAGE);
+        const totalPages = Math.ceil(count[0].count / ITEMS_PER_PAGE);
 
         return totalPages;
     } catch (error) {
