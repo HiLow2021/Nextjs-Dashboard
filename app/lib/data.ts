@@ -169,14 +169,13 @@ export async function fetchCustomers() {
     noStore();
 
     try {
-        const data = await sql<CustomerField>`
+        const customers = await prisma.$queryRaw<CustomerField[]>`
             SELECT
               id,
               name
             FROM customers
             ORDER BY name ASC`;
 
-        const customers = data.rows;
         return customers;
     } catch (err) {
         console.error('Database Error:', err);
