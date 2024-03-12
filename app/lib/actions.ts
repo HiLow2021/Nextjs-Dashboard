@@ -49,3 +49,9 @@ export async function updateInvoice(id: string, formData: FormData) {
     revalidatePath('/dashboard/invoices');
     redirect('/dashboard/invoices');
 }
+
+export async function deleteInvoice(id: string) {
+    await prisma.$executeRaw`DELETE FROM invoices WHERE id = ${id}::uuid`;
+
+    revalidatePath('/dashboard/invoices');
+}
