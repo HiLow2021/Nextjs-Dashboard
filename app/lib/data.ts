@@ -141,16 +141,16 @@ export async function fetchInvoiceById(id: string) {
     noStore();
 
     try {
-        const data = await sql<InvoiceForm>`
+        const data = await prisma.$queryRaw<InvoiceForm[]>`
             SELECT
                 invoices.id,
                 invoices.customer_id,
                 invoices.amount,
                 invoices.status
             FROM invoices
-            WHERE invoices.id = ${id};`;
+            WHERE invoices.id = ${id}::uuid;`;
 
-        const invoice = data.rows.map((invoice) => ({
+        const invoice = data.map((invoice) => ({
             ...invoice,
             // Convert amount from cents to dollars
             amount: invoice.amount / 100
