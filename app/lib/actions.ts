@@ -60,6 +60,7 @@ export async function createInvoice(prevState: State, formData: FormData) {
 
     // Revalidate the cache for the invoices page and redirect the user.
     revalidatePath('/dashboard/invoices');
+    // Don't write inside try-catch-code. If do, throw NEXT_REDIRECT Error.
     redirect('/dashboard/invoices');
 }
 
