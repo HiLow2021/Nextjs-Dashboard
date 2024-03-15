@@ -35,8 +35,6 @@ async function getUser(email: string): Promise<User | undefined> {
     try {
         const user = await prisma.$queryRaw<User[]>`SELECT * FROM users WHERE email=${email}`;
 
-        console.log(user);
-
         return user[0];
     } catch (error) {
         console.error('Failed to fetch user:', error);
