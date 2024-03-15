@@ -1,6 +1,5 @@
 import type { User } from '@/app/lib/definitions';
 import prisma from '@/app/lib/prisma';
-import bcrypt from 'bcrypt';
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import { z } from 'zod';
@@ -19,7 +18,7 @@ export const { auth, signIn, signOut } = NextAuth({
                         return null;
                     }
 
-                    const passwordsMatch = await bcrypt.compare(password, user.password);
+                    const passwordsMatch = password === user.password;
                     if (passwordsMatch) {
                         return user;
                     }
@@ -35,6 +34,8 @@ export const { auth, signIn, signOut } = NextAuth({
 async function getUser(email: string): Promise<User | undefined> {
     try {
         const user = await prisma.$queryRaw<User[]>`SELECT * FROM users WHERE email=${email}`;
+
+        console.log(user);
 
         return user[0];
     } catch (error) {
