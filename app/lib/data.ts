@@ -1,7 +1,7 @@
 import { sql } from '@vercel/postgres';
 import { unstable_noStore as noStore } from 'next/cache';
 import { CustomerField, CustomersTableType, InvoiceForm, InvoicesTable, LatestInvoiceRaw, Revenue, User } from './definitions';
-import prisma from './prisma';
+import prisma from './db';
 import { formatCurrency } from './utils';
 
 export async function fetchRevenue() {

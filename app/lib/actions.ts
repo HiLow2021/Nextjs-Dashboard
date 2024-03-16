@@ -5,7 +5,7 @@ import { AuthError } from 'next-auth';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
-import prisma from './prisma';
+import prisma from './db';
 
 const FormSchema = z.object({
     id: z.string(),

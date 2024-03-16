@@ -1,5 +1,5 @@
 import type { User } from '@/app/lib/definitions';
-import prisma from '@/app/lib/prisma';
+import prisma from '@/app/lib/db';
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import { z } from 'zod';
