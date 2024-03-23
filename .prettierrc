@@ -5,7 +5,6 @@
     "singleQuote": true,
     "trailingComma": "none",
     "semi": true,
-    "parser": "typescript",
     "endOfLine": "crlf",
     "plugins": ["prettier-plugin-tailwindcss"]
 }
