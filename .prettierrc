@@ -6,5 +6,6 @@
     "trailingComma": "none",
     "semi": true,
     "parser": "typescript",
-    "endOfLine": "crlf"
+    "endOfLine": "crlf",
+    "plugins": ["prettier-plugin-tailwindcss"]
 }

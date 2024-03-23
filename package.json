@@ -3,8 +3,8 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
-    "prettier": "prettier --write --ignore-unknown .",
-    "prettier:check": "prettier --check --ignore-unknown .",
+    "format": "prettier --write --ignore-unknown ./**/*.{js,jsx,ts,tsx}",
+    "format-check": "prettier --check --ignore-unknown ./**/*.{js,jsx,ts,tsx}",
     "start": "next start",
     "lint": "next lint"
   },
